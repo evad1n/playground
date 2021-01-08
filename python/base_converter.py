@@ -45,7 +45,6 @@ def convert(baseFrom, num, baseTo):
 
     return converted
 
-
 def main():
     opt = ""
     while opt != "exit":
