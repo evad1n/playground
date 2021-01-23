@@ -1,16 +1,17 @@
 // Consulted below sources and modified
 // https://github.com/evad1n/old-unity-projects/blob/main/source/Flocking/Assets/Scripts/Vehicle.cs
 // https://processing.org/examples/flocking.html
-// https://processing.org/examples/flocking.html
+// https://p5js.org/examples/simulate-flocking.html
+// https://natureofcode.com/
 
-const NUM_FLOCKERS = 20;
+const NUM_FLOCKERS = 40;
 
 function setup() {
     createCanvas(windowWidth, document.body.offsetHeight);
 
     stroke(255);
 
-    flock = new Flock(color(0));
+    flock = new Flock(color(100));
     for (let i = 0; i < NUM_FLOCKERS; i++) {
         flock.addFlocker(createFlocker());
     }
@@ -65,7 +66,7 @@ class Flocker {
     static RADIUS = 10;
 
     // Weighting for forces
-    static FLOCK_DISTANCE = 100;
+    static FLOCK_DISTANCE = 80;
 
     static ALIGN_WEIGHT = 1.0;
     static COHESION_WEIGHT = 1.0;
@@ -102,8 +103,8 @@ class Flocker {
         fill(color);
         // Outline color
         stroke(0);
-        // Outline widht
-        strokeWeight(0);
+        // Outline width
+        strokeWeight(0.5);
 
         // Facing direction
         let angle = this.vel.heading() - radians(90);
@@ -132,12 +133,10 @@ class Flocker {
 
     updatePosition() {
         // Add acceleration to velocity
-        // this.vel.add(p5.Vector.mult(this.accel, deltaTime / 20));
         this.vel.add(this.accel);
         // Limit speed
         this.vel.limit(this.maxSpeed);
         // Add velocity to position
-        // this.pos.add(p5.Vector.mult(this.vel, deltaTime / 20));
         this.pos.add(this.vel);
         // Reset acceleration
         this.accel.mult(0);
