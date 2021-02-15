@@ -25,8 +25,9 @@ function setup() {
     slider = createSlider(1, 60, 40);
     slider.position(10, 40);
     slider.input(() => {
-        print(frameRate());
+        frameRate(slider.value());
     });
+    // Default val
     frameRate(slider.value());
 
     // Scene variables
@@ -87,15 +88,25 @@ function draw() {
             }
             break;
         case "window-snap":
+            // Draw windows
             for (const w of [...windows].reverse()) {
                 w.draw();
             }
+            // Draw snap rect
             if (currSnap != null) {
                 fill(color('rgba(180, 238, 242, 0.5)'));
                 strokeWeight(2);
                 stroke(240);
                 rect(currSnap.x, currSnap.y, currSnap.w, currSnap.h);
             }
+
+            // Draw add window button   
+            fill(255);
+            stroke(0);
+            rect(width - 200, height - 50, 180, 40);
+            fill(0);
+            textSize(25);
+            text("Add Window", width - 180, height - 20);
             break;
         default:
             break;
@@ -115,6 +126,12 @@ function drawRandomDistribution(max) {
 function mouseMoved() {
     switch (currentScene) {
         case "window-snap":
+            // Button
+            if (mouseX > width - 200 && mouseX < width - 200 + 180 && mouseY > height - 50 && mouseY < height - 50 + 40) {
+                cursor("pointer");
+                return;
+            }
+
             for (const w of windows) {
                 resizeDir = w.onBorder();
                 if (resizeDir != null) {
@@ -138,6 +155,12 @@ function mouseMoved() {
 function mousePressed() {
     switch (currentScene) {
         case "window-snap":
+            // Button
+            if (mouseX > width - 200 && mouseX < width - 200 + 180 && mouseY > height - 50 && mouseY < height - 50 + 40) {
+                addWindow();
+                return;
+            }
+
             let w;
             for (let i = 0; i < windows.length; i++) {
                 w = windows[i];
@@ -200,12 +223,16 @@ function mouseReleased() {
             currSnap = null;
             resizing = false;
             cursor();
-            selected = null;
             break;
 
         default:
             break;
     }
+}
+
+function addWindow() {
+    windows.push(new Window(50, 50, color(random(0, 255), random(0, 255), random(0, 255))));
+    selected = windows[windows.length - 1];
 }
 
 function selectWindow(window, idx) {
