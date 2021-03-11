@@ -1,6 +1,7 @@
 # https://www.codewars.com/kata/59d582cafbdd0b7ef90000a0/train/python
 
 from datetime import datetime
+from collections import defaultdict
 
 
 class Inspector:
@@ -10,9 +11,10 @@ class Inspector:
         self.allow = []
         self.deny = []
         self.wanted = []
-        self.reqs = {}
+        self.reqs = defaultdict(list)
+        self.reqs["Citizens"] = defaultdict(list)
     
-    def receiveBulletin(self, bulletin):
+    def receiveBulletin(self, bulletin) -> None:
         lines = bulletin.splitlines()
         for line in lines:
             if "Allow" in line:
@@ -30,14 +32,36 @@ class Inspector:
                 self.wanted.append(name.strip())
             elif "require" in line.lower():
                 words = line.split()
-                # Kind of worker
-                kind = words[0]
+                # Type of entrant
+                entrant_type = words[0]
+
+                if words[1] == "require":
+                    item = ' '.joinwords[2:]
+                    self.reqs[entrant_type].append(item)
+                elif words[1] == "of":
+                    countries = []
+                    i = 2
+                    while ',' in words[i]:
+                        countries.append(words[i][:-1])
+                        i += 1
+                    countries.append(words[i])
+                    if words[i+1] == "require":
+                        item = ' '.joinwords[i+2:]
+                        for c in countries:
+                            self.reqs[entrant_type][c].append(item)
+                    elif words[i+1] == "no":
+                        item = ' '.joinwords[i+3:]
+                        for c in countries:
+                            self.reqs[entrant_type][c].remove(item)
+                elif words[1] == "no":
+                    item = ' '.joinwords[4:]
+                    self.reqs[entrant_type].remove(item)
 
                 for w in words:
                     print(w)
 
 
-    def inspect(self, entrant):
+    def inspect(self, entrant) -> str:
         for k,v in entrant.items():
             print(k, v)
             if k == "passport":
@@ -49,6 +73,7 @@ class Inspector:
         # for line in lines:
         #     if "NATION" in line:
         #         e.nation = "dog"
+        return "Cause no trouble."
 
     def queryCountries(self):
         for c in self.allow:

@@ -24,13 +24,13 @@ func (i Image) At(x, y int) color.Color {
 
 	topLeft, topRight, botLeft, botRight := i.corners(x, y)
 
-	x, y = i.radialize(x, y)
+	x, y = i.quad(x, y)
 
 	transform := func(x, y int) int {
 		// return (x * y) / 100
-		// return (x | y)
-		// return x % (y + 1)
-		return y % (x + 1)
+		return (x | y) * 10
+		// return x / (y + 1)
+		// return int(float64(x%(y+1.0)) / 0.02)
 	}
 
 	switch {
@@ -53,6 +53,17 @@ func inside(x, y int, rect image.Rectangle) bool {
 		x < rect.Max.X &&
 		y > rect.Min.Y &&
 		y < rect.Max.Y)
+}
+
+func (i Image) quad(x, y int) (int, int) {
+	// Corner patterns
+	if x > i.Bounds().Dx()/2 {
+		x = i.Bounds().Dx() - x
+	}
+	if y > i.Bounds().Dy()/2 {
+		y = i.Bounds().Dy() - y
+	}
+	return x, y
 }
 
 func (i Image) radialize(x, y int) (int, int) {
